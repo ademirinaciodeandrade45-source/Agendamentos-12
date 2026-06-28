@@ -1,0 +1,2826 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgendaPro - Barbearia & Salão</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8fafc;
+  --bg-secondary: #ffffff;
+  --text: #0f172a;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-secondary: #1e293b;
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border: #334155;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: var(--transition);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header */
+header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--primary);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.icon-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text);
+}
+
+.icon-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.hamburger {
+  display: none;
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 73px;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem;
+  box-shadow: var(--shadow-lg);
+  z-index: 99;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.mobile-menu.active {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mobile-menu .nav-link {
+  display: block;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+}
+
+/* Main Content */
+main {
+  min-height: calc(100vh - 73px - 60px);
+  padding: 2rem 0;
+}
+
+.page {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.page.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--primary), #ec4899);
+  border-radius: var(--radius);
+  padding: 3rem 2rem;
+  color: white;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hero p {
+  opacity: 0.9;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: inherit;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--border);
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-block {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Cards */
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: var(--transition);
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--primary);
+}
+
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Categories */
+.category-card {
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), #ec4899);
+  transform: scaleX(0);
+  transition: var(--transition);
+}
+
+.category-card:hover::before {
+  transform: scaleX(1);
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+}
+
+.category-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--primary), #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Service Cards */
+.service-card {
+  cursor: pointer;
+  position: relative;
+}
+
+.service-card.selected {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(236, 72, 153, 0.05));
+}
+
+.service-card.selected::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.service-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.service-duration {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Staff Cards */
+.staff-card {
+  text-align: center;
+  cursor: pointer;
+}
+
+.staff-card.selected {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(236, 72, 153, 0.05));
+}
+
+.staff-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  object-fit: cover;
+  border: 3px solid var(--border);
+}
+
+.staff-rating {
+  color: var(--warning);
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  margin: 0.125rem;
+}
+
+/* Calendar */
+.calendar {
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.875rem;
+  border: 1px solid transparent;
+}
+
+.calendar-day.header {
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+.calendar-day.disabled {
+  color: var(--text-secondary);
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.calendar-day:not(.disabled):not(.header):hover {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+.calendar-day.selected {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.calendar-day.today {
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.time-slot {
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.875rem;
+}
+
+.time-slot:hover:not(.disabled) {
+  background: var(--bg);
+  border-color: var(--primary);
+}
+
+.time-slot.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.time-slot.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+/* Steps */
+.booking-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.booking-steps::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.step.active .step-circle {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.step.completed .step-circle {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.step-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.step.active .step-label {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Appointment List */
+.appointment-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+.appointment-item:hover {
+  box-shadow: var(--shadow);
+}
+
+.appointment-time {
+  text-align: center;
+  min-width: 80px;
+}
+
+.appointment-time .date {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.appointment-time .month {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.appointment-details {
+  flex: 1;
+}
+
+.appointment-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-agendado { background: rgba(124, 58, 237, 0.1); color: var(--primary); }
+.status-concluido { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+.status-cancelado { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+/* Table */
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toast {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 300px;
+  animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(100px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.toast.success { border-left: 4px solid var(--success); }
+.toast.error { border-left: 4px solid var(--danger); }
+.toast.info { border-left: 4px solid var(--primary); }
+
+/* Utils */
+.text-center { text-align: center; }
+.text-muted { color: var(--text-secondary); }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.hidden { display: none !important; }
+
+.whatsapp-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  width: 56px;
+  height: 56px;
+  background: #25d366;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 50;
+}
+
+.whatsapp-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Footer */
+footer {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Admin Sidebar */
+.admin-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 1.5rem;
+}
+
+.admin-sidebar {
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 1rem;
+  border: 1px solid var(--border);
+  height: fit-content;
+  position: sticky;
+  top: 90px;
+}
+
+.admin-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.admin-sidebar-link:hover {
+  background: var(--bg);
+  color: var(--primary);
+}
+
+.admin-sidebar-link.active {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(236, 72, 153, 0.1));
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+  .admin-sidebar {
+    position: static;
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+  }
+  .admin-sidebar-link {
+    white-space: nowrap;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .hero h1 { font-size: 1.75rem; }
+  .hero { padding: 2rem 1.5rem; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .booking-steps { gap: 0.5rem; }
+  .step-label { font-size: 0.65rem; }
+  .appointment-item { flex-direction: column; }
+  .table-responsive { font-size: 0.875rem; }
+  .whatsapp-btn { bottom: 1rem; left: 1rem; width: 48px; height: 48px; }
+}
+
+@media (max-width: 390px) {
+  .container { padding: 0 0.75rem; }
+  .card { padding: 1rem; }
+  .time-slots { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <nav class="nav">
+      <div class="logo" onclick="showPage('home')">
+        <i class="fa-solid fa-scissors"></i>
+        AgendaPro
+      </div>
+      <div class="nav-links">
+        <a class="nav-link active" data-page="home">Início</a>
+        <a class="nav-link" data-page="booking">Agendar</a>
+        <a class="nav-link" data-page="services">Serviços</a>
+        <a class="nav-link" data-page="professionals">Profissionais</a>
+        <a class="nav-link" data-page="client">Meus Agendamentos</a>
+        <a class="nav-link" data-page="admin">Admin</a>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" title="Alternar tema">
+          <i class="fa-solid fa-moon" id="theme-icon"></i>
+        </button>
+        <button class="icon-btn hamburger" id="hamburgerBtn">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a class="nav-link" data-page="home">Início</a>
+    <a class="nav-link" data-page="booking">Agendar</a>
+    <a class="nav-link" data-page="services">Serviços</a>
+    <a class="nav-link" data-page="professionals">Profissionais</a>
+    <a class="nav-link" data-page="client">Meus Agendamentos</a>
+    <a class="nav-link" data-page="admin">Admin</a>
+  </div>
+</header>
+
+<main class="container">
+  <!-- HOME PAGE -->
+  <div class="page active" id="home">
+    <div class="hero">
+      <h1>Seu estilo, nossa paixão</h1>
+      <p>Agende seu horário online em segundos. Barbearia & Salão de Beleza completo.</p>
+      <button class="btn btn-secondary" onclick="showPage('booking')">
+        <i class="fa-solid fa-calendar-check"></i> Agendar Agora
+      </button>
+    </div>
+
+    <div class="card mb-3">
+      <h2 class="card-title mb-2">Escolha uma categoria</h2>
+      <div class="grid grid-4">
+        <div class="card category-card" onclick="startBooking('Cabelo')">
+          <div class="category-icon"><i class="fa-solid fa-scissors"></i></div>
+          <h3>Cabelo</h3>
+          <p class="text-muted">Cortes e tratamentos</p>
+        </div>
+        <div class="card category-card" onclick="startBooking('Barba')">
+          <div class="category-icon"><i class="fa-solid fa-face-smile"></i></div>
+          <h3>Barba</h3>
+          <p class="text-muted">Design e cuidados</p>
+        </div>
+        <div class="card category-card" onclick="startBooking('Unha')">
+          <div class="category-icon"><i class="fa-solid fa-hand-sparkles"></i></div>
+          <h3>Unha</h3>
+          <p class="text-muted">Manicure e pedicure</p>
+        </div>
+        <div class="card category-card" onclick="startBooking('Estética')">
+          <div class="category-icon"><i class="fa-solid fa-spa"></i></div>
+          <h3>Estética</h3>
+          <p class="text-muted">Skin care e mais</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title mb-2">Combos em Destaque</h2>
+      <div class="grid grid-3" id="featuredCombos"></div>
+    </div>
+  </div>
+
+  <!-- BOOKING PAGE -->
+  <div class="page" id="booking">
+    <div class="card">
+      <div class="booking-steps">
+        <div class="step active" data-step="1">
+          <div class="step-circle">1</div>
+          <div class="step-label">Serviço</div>
+        </div>
+        <div class="step" data-step="2">
+          <div class="step-circle">2</div>
+          <div class="step-label">Profissional</div>
+        </div>
+        <div class="step" data-step="3">
+          <div class="step-circle">3</div>
+          <div class="step-label">Data & Hora</div>
+        </div>
+        <div class="step" data-step="4">
+          <div class="step-circle">4</div>
+          <div class="step-label">Dados</div>
+        </div>
+        <div class="step" data-step="5">
+          <div class="step-circle">5</div>
+          <div class="step-label">Confirmação</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Service -->
+      <div class="booking-content" id="step1">
+        <h2 class="card-title mb-2">Escolha o serviço</h2>
+        <div class="form-group">
+          <select class="form-select" id="categoryFilter">
+            <option value="">Todas as categorias</option>
+            <option value="Cabelo">Cabelo</option>
+            <option value="Barba">Barba</option>
+            <option value="Unha">Unha</option>
+            <option value="Estética">Estética</option>
+            <option value="Combo">Combo</option>
+          </select>
+        </div>
+        <div class="grid grid-2" id="servicesList"></div>
+      </div>
+
+      <!-- Step 2: Professional -->
+      <div class="booking-content hidden" id="step2">
+        <h2 class="card-title mb-2">Escolha o profissional</h2>
+        <div class="grid grid-3" id="staffList"></div>
+        <button class="btn btn-secondary mt-3" id="backStep2">
+          <i class="fa-solid fa-arrow-left"></i> Voltar
+        </button>
+      </div>
+
+      <!-- Step 3: Date & Time -->
+      <div class="booking-content hidden" id="step3">
+        <h2 class="card-title mb-2">Escolha data e horário</h2>
+        <div class="grid grid-2">
+          <div class="calendar">
+            <div class="calendar-header">
+              <button class="icon-btn" id="prevMonth"><i class="fa-solid fa-chevron-left"></i></button>
+              <h3 id="calendarMonth"></h3>
+              <button class="icon-btn" id="nextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            <div class="calendar-grid" id="calendar"></div>
+          </div>
+          <div>
+            <h3 class="mb-2">Horários disponíveis</h3>
+            <div class="time-slots" id="timeSlots">
+              <p class="text-muted">Selecione uma data primeiro</p>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-secondary mt-3" id="backStep3">
+          <i class="fa-solid fa-arrow-left"></i> Voltar
+        </button>
+      </div>
+
+      <!-- Step 4: Client Data -->
+      <div class="booking-content hidden" id="step4">
+        <h2 class="card-title mb-2">Seus dados</h2>
+        <div class="form-group">
+          <label class="form-label">Nome completo *</label>
+          <input type="text" class="form-input" id="clientName" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp *</label>
+          <input type="tel" class="form-input" id="clientPhone" placeholder="(47) 99635-5319" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-mail</label>
+          <input type="email" class="form-input" id="clientEmail">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Observações</label>
+          <textarea class="form-textarea" id="clientNotes" rows="3"></textarea>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <button class="btn btn-secondary" id="backStep4">
+            <i class="fa-solid fa-arrow-left"></i> Voltar
+          </button>
+          <button class="btn btn-primary" id="continueStep4">
+            Continuar <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 5: Confirmation -->
+      <div class="booking-content hidden" id="step5">
+        <div class="text-center mb-3">
+          <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: var(--success);"></i>
+          <h2 class="mt-2">Confirme seu agendamento</h2>
+        </div>
+        <div class="card" style="background: var(--bg);">
+          <div id="bookingSummary"></div>
+        </div>
+        <div style="display: flex; gap: 1rem;" class="mt-3">
+          <button class="btn btn-secondary" id="backStep5">
+            <i class="fa-solid fa-arrow-left"></i> Voltar
+          </button>
+          <button class="btn btn-success" id="confirmBookingBtn">
+            <i class="fa-solid fa-check"></i> Confirmar Agendamento
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES PAGE -->
+  <div class="page" id="services">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Nossos Serviços</h2>
+        <select class="form-select" id="servicesPageFilter" style="width: auto;">
+          <option value="">Todas as categorias</option>
+          <option value="Cabelo">Cabelo</option>
+          <option value="Barba">Barba</option>
+          <option value="Unha">Unha</option>
+          <option value="Estética">Estética</option>
+          <option value="Combo">Combo</option>
+        </select>
+      </div>
+      <div class="grid grid-3" id="allServicesList"></div>
+    </div>
+  </div>
+
+  <!-- PROFESSIONALS PAGE -->
+  <div class="page" id="professionals">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Nossa Equipe</h2>
+        <select class="form-select" id="professionalsPageFilter" style="width: auto;">
+          <option value="">Todas especialidades</option>
+          <option value="Cabelo">Cabelo</option>
+          <option value="Barba">Barba</option>
+          <option value="Unha">Unha</option>
+          <option value="Estética">Estética</option>
+        </select>
+      </div>
+      <div class="grid grid-3" id="allProfessionalsList"></div>
+    </div>
+  </div>
+
+  <!-- CLIENT PAGE -->
+  <div class="page" id="client">
+    <div class="card mb-3" id="loginCard">
+      <h2 class="card-title mb-2">Área do Cliente</h2>
+      <div class="grid grid-2">
+        <div>
+          <h3 class="mb-2">Já tenho cadastro</h3>
+          <div class="form-group">
+            <label class="form-label">E-mail ou WhatsApp</label>
+            <input type="text" class="form-input" id="loginUser" placeholder="Digite seu e-mail ou telefone">
+          </div>
+          <button class="btn btn-primary btn-block" id="clientLoginBtn">
+            <i class="fa-solid fa-right-to-bracket"></i> Entrar
+          </button>
+        </div>
+        <div>
+          <h3 class="mb-2">Novo cliente</h3>
+          <p class="text-muted mb-2">Cadastre-se para ver seu histórico e reagendar com 1 clique</p>
+          <div class="form-group">
+            <label class="form-label">Nome</label>
+            <input type="text" class="form-input" id="registerName">
+          </div>
+          <div class="form-group">
+            <label class="form-label">WhatsApp</label>
+            <input type="tel" class="form-input" id="registerPhone">
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input type="email" class="form-input" id="registerEmail">
+          </div>
+          <button class="btn btn-secondary btn-block" id="clientRegisterBtn">
+            <i class="fa-solid fa-user-plus"></i> Cadastrar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="clientDashboard" class="hidden">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Olá, <span id="clientDashboardName"></span>!</h2>
+          <button class="btn btn-sm btn-secondary" id="clientLogoutBtn">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair
+          </button>
+        </div>
+        
+        <div class="tabs">
+          <div class="tab active" data-tab="upcoming">Próximos</div>
+          <div class="tab" data-tab="history">Histórico</div>
+          <div class="tab" data-tab="loyalty">Fidelidade</div>
+        </div>
+
+        <div class="tab-content active" id="upcomingTab">
+          <div id="upcomingAppointments"></div>
+        </div>
+        
+        <div class="tab-content" id="historyTab">
+          <div id="pastAppointments"></div>
+        </div>
+        
+        <div class="tab-content" id="loyaltyTab">
+          <div class="card" style="background: var(--bg);">
+            <h3 class="mb-2"><i class="fa-solid fa-star"></i> Programa de Fidelidade</h3>
+            <p class="text-muted mb-3">A cada 5 agendamentos concluídos, ganhe 20% de desconto!</p>
+            <div id="loyaltyPoints"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PAGE -->
+  <div class="page" id="admin">
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-link active" data-admin-tab="dashboard">
+          <i class="fa-solid fa-chart-line"></i> Dashboard
+        </div>
+        <div class="admin-sidebar-link" data-admin-tab="appointments">
+          <i class="fa-solid fa-calendar"></i> Agendamentos
+        </div>
+        <div class="admin-sidebar-link" data-admin-tab="services">
+          <i class="fa-solid fa-scissors"></i> Serviços
+        </div>
+        <div class="admin-sidebar-link" data-admin-tab="staff">
+          <i class="fa-solid fa-users"></i> Equipe
+        </div>
+        <div class="admin-sidebar-link" data-admin-tab="branding">
+          <i class="fa-solid fa-palette"></i> Personalizar Marca
+        </div>
+        <div class="admin-sidebar-link" data-admin-tab="settings">
+          <i class="fa-solid fa-gear"></i> Configurações
+        </div>
+      </aside>
+
+      <div>
+        <!-- Dashboard Tab -->
+        <div class="admin-tab-content" id="admin-dashboard">
+          <div class="grid grid-4 mb-3">
+            <div class="card text-center">
+              <i class="fa-solid fa-calendar-day" style="font-size: 2rem; color: var(--primary);"></i>
+              <h3 id="todayCount" class="mt-2" style="font-size: 2rem;">0</h3>
+              <p class="text-muted">Agendamentos hoje</p>
+            </div>
+            <div class="card text-center">
+              <i class="fa-solid fa-dollar-sign" style="font-size: 2rem; color: var(--success);"></i>
+              <h3 id="todayRevenue" class="mt-2" style="font-size: 2rem;">R$ 0</h3>
+              <p class="text-muted">Faturamento hoje</p>
+            </div>
+            <div class="card text-center">
+              <i class="fa-solid fa-users" style="font-size: 2rem; color: var(--warning);"></i>
+              <h3 id="staffCount" class="mt-2" style="font-size: 2rem;">0</h3>
+              <p class="text-muted">Profissionais ativos</p>
+            </div>
+            <div class="card text-center">
+              <i class="fa-solid fa-scissors" style="font-size: 2rem; color: var(--danger);"></i>
+              <h3 id="serviceCount" class="mt-2" style="font-size: 2rem;">0</h3>
+              <p class="text-muted">Serviços</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title mb-2">Resumo Semanal</h3>
+            <canvas id="weeklyChart" style="max-height: 300px;"></canvas>
+          </div>
+        </div>
+
+        <!-- Appointments Tab -->
+        <div class="admin-tab-content hidden" id="admin-appointments">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h2 class="card-title">Agendamentos</h2>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <input type="date" class="form-input" id="adminDateFilter" style="width: auto;">
+                <select class="form-select" id="adminStaffFilter" style="width: auto;">
+                  <option value="">Todos profissionais</option>
+                </select>
+                <select class="form-select" id="adminStatusFilter" style="width: auto;">
+                  <option value="">Todos status</option>
+                  <option value="agendado">Agendado</option>
+                  <option value="concluido">Concluído</option>
+                  <option value="cancelado">Cancelado</option>
+                </select>
+                <button class="btn btn-sm btn-primary" id="filterAdminBtn">
+                  <i class="fa-solid fa-filter"></i> Filtrar
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data/Hora</th>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th>Profissional</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="adminAppointments"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Services Tab -->
+        <div class="admin-tab-content hidden" id="admin-services">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Gerenciar Serviços</h2>
+              <button class="btn btn-sm btn-primary" id="addServiceBtn">
+                <i class="fa-solid fa-plus"></i> Adicionar
+              </button>
+            </div>
+            <div id="adminServices"></div>
+          </div>
+        </div>
+
+        <!-- Staff Tab -->
+        <div class="admin-tab-content hidden" id="admin-staff">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Gerenciar Equipe</h2>
+              <button class="btn btn-sm btn-primary" id="addStaffBtn">
+                <i class="fa-solid fa-plus"></i> Adicionar
+              </button>
+            </div>
+            <div id="adminStaff"></div>
+          </div>
+        </div>
+
+        <!-- Branding Tab -->
+        <div class="admin-tab-content hidden" id="admin-branding">
+          <div class="card">
+            <h2 class="card-title mb-3">Personalizar Marca</h2>
+            <div class="form-group">
+              <label class="form-label">Nome da Empresa</label>
+              <input type="text" class="form-input" id="brandName" value="AgendaPro">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cor Primária</label>
+              <input type="color" class="form-input" id="brandColor" value="#7c3aed">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Logo (URL)</label>
+              <input type="url" class="form-input" id="brandLogo" placeholder="https://...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp Business</label>
+              <input type="tel" class="form-input" id="brandWhatsApp" value="47996355319">
+            </div>
+            <button class="btn btn-primary" id="saveBrandBtn">
+              <i class="fa-solid fa-save"></i> Salvar Personalização
+            </button>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="admin-tab-content hidden" id="admin-settings">
+          <div class="card">
+            <h2 class="card-title mb-3">Configurações Gerais</h2>
+            <div class="form-group">
+              <label class="form-label">Horário de Funcionamento</label>
+              <div style="display: flex; gap: 1rem;">
+                <input type="time" class="form-input" id="businessStart" value="09:00">
+                <input type="time" class="form-input" id="businessEnd" value="18:00">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Intervalo entre agendamentos (min)</label>
+              <input type="number" class="form-input" id="appointmentInterval" value="30">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Antecedência mínima para agendamento (horas)</label>
+              <input type="number" class="form-input" id="minAdvance" value="2">
+            </div>
+            <button class="btn btn-primary" id="saveSettingsBtn">
+              <i class="fa-solid fa-save"></i> Salvar Configurações
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modals -->
+<div class="modal-overlay" id="serviceModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="serviceModalTitle">Adicionar Serviço</h3>
+      <button class="icon-btn" data-close="serviceModal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="serviceId">
+      <div class="form-group">
+        <label class="form-label">Nome do serviço *</label>
+        <input type="text" class="form-input" id="serviceName">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Categoria *</label>
+        <select class="form-select" id="serviceCategory">
+          <option value="Cabelo">Cabelo</option>
+          <option value="Barba">Barba</option>
+          <option value="Unha">Unha</option>
+          <option value="Estética">Estética</option>
+          <option value="Combo">Combo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preço (R$) *</label>
+        <input type="number" class="form-input" id="servicePrice" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Duração (min) *</label>
+        <input type="number" class="form-input" id="serviceDuration">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <textarea class="form-textarea" id="serviceDescription" rows="3"></textarea>
+      </div>
+      <button class="btn btn-primary btn-block" id="saveServiceBtn">
+        <i class="fa-solid fa-save"></i> Salvar Serviço
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="staffModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="staffModalTitle">Adicionar Profissional</h3>
+      <button class="icon-btn" data-close="staffModal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="staffId">
+      <div class="form-group">
+        <label class="form-label">Nome *</label>
+        <input type="text" class="form-input" id="staffName">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Foto (URL)</label>
+        <input type="url" class="form-input" id="staffPhoto" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Especialidades</label>
+        <input type="text" class="form-input" id="staffSpecialties" placeholder="Separadas por vírgula">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Horário de trabalho</label>
+        <div style="display: flex; gap: 1rem;">
+          <input type="time" class="form-input" id="staffStartTime" value="09:00">
+          <input type="time" class="form-input" id="staffEndTime" value="18:00">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" id="saveStaffBtn">
+        <i class="fa-solid fa-save"></i> Salvar Profissional
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="appointmentDetailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Detalhes do Agendamento</h3>
+      <button class="icon-btn" data-close="appointmentDetailModal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="appointmentDetailContent"></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- WhatsApp Button -->
+<a class="whatsapp-btn" id="whatsappBtn">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2024 AgendaPro. Desenvolvido para Barbearias e Salões de Beleza.</p>
+    <p class="text-muted">WhatsApp: (47) 99635-5319 | Pix: Aceito | Pagamento na hora</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ============ DATA MANAGEMENT ============
+const DB = {
+  services: 'agendaPro_services',
+  staff: 'agendaPro_staff',
+  appointments: 'agendaPro_appointments',
+  clients: 'agendaPro_clients',
+  currentClient: 'agendaPro_currentClient',
+  theme: 'agendaPro_theme',
+  settings: 'agendaPro_settings',
+  branding: 'agendaPro_branding'
+};
+
+let bookingData = {
+  service: null,
+  staff: null,
+  date: null,
+  time: null,
+  client: {}
+};
+
+let currentStep = 1;
+let selectedDate = new Date();
+let currentMonth = new Date();
+let weeklyChart = null;
+
+// ============ INITIALIZATION ============
+function init() {
+  loadTheme();
+  loadBranding();
+  initDemoData();
+  attachEventListeners();
+  renderFeaturedCombos();
+  renderServices();
+  renderStaff();
+  renderAdminDashboard();
+  
+  const savedPage = localStorage.getItem('currentPage') || 'home';
+  showPage(savedPage);
+  
+  document.getElementById('adminDateFilter').value = new Date().toISOString().split('T')[0];
+  
+  const currentClient = getCurrentClient();
+  if (currentClient) showClientDashboard();
+}
+
+function initDemoData() {
+  if (!localStorage.getItem(DB.services)) {
+    const demoServices = [
+      { id: 1, name: 'Corte Masculino', category: 'Cabelo', price: 35, duration: 30, description: 'Corte moderno com acabamento' },
+      { id: 2, name: 'Corte Feminino', category: 'Cabelo', price: 60, duration: 60, description: 'Corte, lavagem e escova' },
+      { id: 3, name: 'Barba Completa', category: 'Barba', price: 30, duration: 30, description: 'Design, aparo e hidratação' },
+      { id: 4, name: 'Manicure', category: 'Unha', price: 25, duration: 45, description: 'Cutilagem e esmaltação' },
+      { id: 5, name: 'Pedicure', category: 'Unha', price: 30, duration: 45, description: 'Cutilagem e esmaltação' },
+      { id: 6, name: 'Limpeza de Pele', category: 'Estética', price: 80, duration: 60, description: 'Limpeza profunda facial' },
+      { id: 7, name: 'Combo Corte + Barba', category: 'Combo', price: 60, duration: 60, description: 'Corte masculino + barba completa' },
+      { id: 8, name: 'Combo Completo', category: 'Combo', price: 120, duration: 120, description: 'Corte + Barba + Sobrancelha' }
+    ];
+    localStorage.setItem(DB.services, JSON.stringify(demoServices));
+  }
+
+  if (!localStorage.getItem(DB.staff)) {
+    const demoStaff = [
+      { id: 1, name: 'João Silva', photo: 'https://i.pravatar.cc/150?img=12', specialties: ['Cabelo', 'Barba'], rating: 4.9, startTime: '09:00', endTime: '18:00' },
+      { id: 2, name: 'Maria Santos', photo: 'https://i.pravatar.cc/150?img=45', specialties: ['Cabelo', 'Estética'], rating: 4.8, startTime: '10:00', endTime: '19:00' },
+      { id: 3, name: 'Ana Costa', photo: 'https://i.pravatar.cc/150?img=47', specialties: ['Unha', 'Estética'], rating: 5.0, startTime: '09:00', endTime: '17:00' },
+      { id: 4, name: 'Carlos Lima', photo: 'https://i.pravatar.cc/150?img=33', specialties: ['Cabelo', 'Barba', 'Combo'], rating: 4.7, startTime: '08:00', endTime: '18:00' }
+    ];
+    localStorage.setItem(DB.staff, JSON.stringify(demoStaff));
+  }
+
+  if (!localStorage.getItem(DB.appointments)) {
+    localStorage.setItem(DB.appointments, JSON.stringify([]));
+  }
+  if (!localStorage.getItem(DB.clients)) {
+    localStorage.setItem(DB.clients, JSON.stringify([]));
+  }
+  if (!localStorage.getItem(DB.settings)) {
+    localStorage.setItem(DB.settings, JSON.stringify({
+      businessStart: '09:00',
+      businessEnd: '18:00',
+      appointmentInterval: 30,
+      minAdvance: 2
+    }));
+  }
+  if (!localStorage.getItem(DB.branding)) {
+    localStorage.setItem(DB.branding, JSON.stringify({
+      name: 'AgendaPro',
+      color: '#7c3aed',
+      logo: '',
+      whatsapp: '47996355319'
+    }));
+  }
+}
+
+// ============ EVENT LISTENERS ============
+function attachEventListeners() {
+  // Navigation
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const page = this.dataset.page;
+      if (page) {
+        showPage(page);
+        closeMobileMenu();
+      }
+    });
+  });
+
+  // Theme toggle
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  
+  // Hamburger menu
+  document.getElementById('hamburgerBtn').addEventListener('click', toggleMobileMenu);
+  
+  // Close mobile menu on outside click
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('mobileMenu');
+    const btn = document.getElementById('hamburgerBtn');
+    if (menu.classList.contains('active') && !menu.contains(e.target) && !btn.contains(e.target)) {
+      closeMobileMenu();
+    }
+  });
+
+  // Booking steps
+  document.getElementById('categoryFilter').addEventListener('change', filterServices);
+  document.getElementById('backStep2')?.addEventListener('click', prevStep);
+  document.getElementById('backStep3')?.addEventListener('click', prevStep);
+  document.getElementById('backStep4')?.addEventListener('click', prevStep);
+  document.getElementById('backStep5')?.addEventListener('click', prevStep);
+  document.getElementById('continueStep4')?.addEventListener('click', nextStep);
+  document.getElementById('confirmBookingBtn')?.addEventListener('click', confirmBooking);
+  
+  // Calendar
+  document.getElementById('prevMonth')?.addEventListener('click', () => changeMonth(-1));
+  document.getElementById('nextMonth')?.addEventListener('click', () => changeMonth(1));
+  
+  // Client area
+  document.getElementById('clientLoginBtn')?.addEventListener('click', clientLogin);
+  document.getElementById('clientRegisterBtn')?.addEventListener('click', clientRegister);
+  document.getElementById('clientLogoutBtn')?.addEventListener('click', clientLogout);
+  
+  // Client tabs
+  document.querySelectorAll('#client .tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabName = this.dataset.tab;
+      document.querySelectorAll('#client .tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('#client .tab-content').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById(tabName + 'Tab').classList.add('active');
+    });
+  });
+  
+  // Admin tabs
+  document.querySelectorAll('.admin-sidebar-link').forEach(link => {
+    link.addEventListener('click', function() {
+      const tab = this.dataset.adminTab;
+      document.querySelectorAll('.admin-sidebar-link').forEach(l => l.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
+      this.classList.add('active');
+      document.getElementById('admin-' + tab).classList.remove('hidden');
+      if (tab === 'dashboard') renderWeeklyChart();
+    });
+  });
+  
+  // Admin actions
+  document.getElementById('filterAdminBtn')?.addEventListener('click', filterAdminAppointments);
+  document.getElementById('addServiceBtn')?.addEventListener('click', openServiceModal);
+  document.getElementById('addStaffBtn')?.addEventListener('click', openStaffModal);
+  document.getElementById('saveServiceBtn')?.addEventListener('click', saveService);
+  document.getElementById('saveStaffBtn')?.addEventListener('click', saveStaff);
+  document.getElementById('saveBrandBtn')?.addEventListener('click', saveBranding);
+  document.getElementById('saveSettingsBtn')?.addEventListener('click', saveSettings);
+  
+  // Services/Professionals filters
+  document.getElementById('servicesPageFilter')?.addEventListener('change', renderAllServices);
+  document.getElementById('professionalsPageFilter')?.addEventListener('change', renderAllProfessionals);
+  
+  // Modal close
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      closeModal(this.dataset.close);
+    });
+  });
+  
+  // Modal overlay click
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
+  });
+  
+  // WhatsApp
+  document.getElementById('whatsappBtn').addEventListener('click', contactWhatsApp);
+}
+
+// ============ THEME ============
+function loadTheme() {
+  const theme = localStorage.getItem(DB.theme) || 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('theme-icon').className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const newTheme = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem(DB.theme, newTheme);
+  document.getElementById('theme-icon').className = newTheme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  showToast(`Tema ${newTheme === 'dark' ? 'escuro' : 'claro'} ativado`, 'info');
+}
+
+// ============ BRANDING ============
+function loadBranding() {
+  const branding = JSON.parse(localStorage.getItem(DB.branding) || '{}');
+  if (branding.color) {
+    document.documentElement.style.setProperty('--primary', branding.color);
+  }
+  if (branding.name) {
+    document.querySelector('.logo').innerHTML = `<i class="fa-solid fa-scissors"></i> ${branding.name}`;
+  }
+  document.getElementById('brandName').value = branding.name || 'AgendaPro';
+  document.getElementById('brandColor').value = branding.color || '#7c3aed';
+  document.getElementById('brandLogo').value = branding.logo || '';
+  document.getElementById('brandWhatsApp').value = branding.whatsapp || '47996355319';
+}
+
+function saveBranding() {
+  const branding = {
+    name: document.getElementById('brandName').value,
+    color: document.getElementById('brandColor').value,
+    logo: document.getElementById('brandLogo').value,
+    whatsapp: document.getElementById('brandWhatsApp').value
+  };
+  localStorage.setItem(DB.branding, JSON.stringify(branding));
+  loadBranding();
+  showToast('Personalização salva com sucesso!', 'success');
+}
+
+// ============ NAVIGATION ============
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll(`.nav-link[data-page="${pageId}"]`).forEach(l => l.classList.add('active'));
+  localStorage.setItem('currentPage', pageId);
+  window.scrollTo(0, 0);
+  
+  if (pageId === 'services') renderAllServices();
+  if (pageId === 'professionals') renderAllProfessionals();
+  if (pageId === 'admin') renderWeeklyChart();
+}
+
+function toggleMobileMenu() {
+  document.getElementById('mobileMenu').classList.toggle('active');
+}
+
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('active');
+}
+
+// ============ BOOKING FLOW ============
+function startBooking(category) {
+  showPage('booking');
+  if (category) {
+    document.getElementById('categoryFilter').value = category;
+    filterServices();
+  }
+  resetBooking();
+}
+
+function resetBooking() {
+  bookingData = { service: null, staff: null, date: null, time: null, client: {} };
+  currentStep = 1;
+  updateStepUI();
+  renderServices();
+}
+
+function updateStepUI() {
+  document.querySelectorAll('.step').forEach((step, idx) => {
+    step.classList.remove('active', 'completed');
+    if (idx + 1 < currentStep) step.classList.add('completed');
+    if (idx + 1 === currentStep) step.classList.add('active');
+  });
+
+  document.querySelectorAll('.booking-content').forEach(c => c.classList.add('hidden'));
+  document.getElementById(`step${currentStep}`).classList.remove('hidden');
+}
+
+function nextStep() {
+  if (currentStep === 1 && !bookingData.service) {
+    showToast('Selecione um serviço primeiro', 'error');
+    return;
+  }
+  if (currentStep === 3 && (!bookingData.date || !bookingData.time)) {
+    showToast('Selecione data e horário', 'error');
+    return;
+  }
+  if (currentStep === 4) {
+    const name = document.getElementById('clientName').value;
+    const phone = document.getElementById('clientPhone').value;
+    if (!name || !phone) {
+      showToast('Preencha nome e WhatsApp', 'error');
+      return;
+    }
+    bookingData.client = {
+      name,
+      phone,
+      email: document.getElementById('clientEmail').value,
+      notes: document.getElementById('clientNotes').value
+    };
+    renderBookingSummary();
+  }
+  
+  currentStep++;
+  updateStepUI();
+  
+  if (currentStep === 2) renderBookingStaff();
+  if (currentStep === 3) renderCalendar();
+}
+
+function prevStep() {
+  if (currentStep > 1) {
+    currentStep--;
+    updateStepUI();
+  }
+}
+
+function renderServices() {
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  const category = document.getElementById('categoryFilter')?.value || '';
+  const filtered = category ? services.filter(s => s.category === category) : services;
+  
+  const html = filtered.map(s => `
+    <div class="card service-card ${bookingData.service?.id === s.id ? 'selected' : ''}" data-service-id="${s.id}">
+      <h3 class="mb-1">${s.name}</h3>
+      <p class="text-muted mb-2">${s.description}</p>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="service-price">R$ ${s.price.toFixed(2)}</div>
+        <div class="service-duration"><i class="fa-solid fa-clock"></i> ${s.duration} min</div>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('servicesList').innerHTML = html || '<p class="text-muted">Nenhum serviço encontrado</p>';
+  
+  // Attach click handlers
+  document.querySelectorAll('[data-service-id]').forEach(card => {
+    card.addEventListener('click', function() {
+      selectService(parseInt(this.dataset.serviceId));
+    });
+  });
+}
+
+function filterServices() {
+  renderServices();
+}
+
+function selectService(id) {
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  bookingData.service = services.find(s => s.id === id);
+  renderServices();
+  setTimeout(nextStep, 300);
+}
+
+function renderBookingStaff() {
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  const category = bookingData.service.category;
+  const filtered = staff.filter(s => s.specialties.includes(category) || category === 'Combo');
+  
+  const html = filtered.map(s => `
+    <div class="card staff-card ${bookingData.staff?.id === s.id ? 'selected' : ''}" data-staff-id="${s.id}">
+      <img src="${s.photo}" alt="${s.name}" class="staff-avatar">
+      <h3>${s.name}</h3>
+      <div class="staff-rating">
+        <i class="fa-solid fa-star"></i> ${s.rating.toFixed(1)}
+      </div>
+      <div>
+        ${s.specialties.map(sp => `<span class="badge">${sp}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('staffList').innerHTML = html || '<p class="text-muted">Nenhum profissional disponível</p>';
+  
+  document.querySelectorAll('[data-staff-id]').forEach(card => {
+    card.addEventListener('click', function() {
+      selectStaff(parseInt(this.dataset.staffId));
+    });
+  });
+}
+
+function selectStaff(id) {
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  bookingData.staff = staff.find(s => s.id === id);
+  renderBookingStaff();
+  setTimeout(nextStep, 300);
+}
+
+// ============ CALENDAR ============
+function renderCalendar() {
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  
+  document.getElementById('calendarMonth').textContent = 
+    currentMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  
+  let html = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(d => 
+    `<div class="calendar-day header">${d}</div>`
+  ).join('');
+  
+  for (let i = firstDay - 1; i >= 0; i--) {
+    html += `<div class="calendar-day disabled">${daysInPrevMonth - i}</div>`;
+  }
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, month, day);
+    const isPast = date < today;
+    const isToday = date.getTime() === today.getTime();
+    const isSelected = bookingData.date && date.toDateString() === new Date(bookingData.date).toDateString();
+    
+    html += `<div class="calendar-day ${isPast ? 'disabled' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
+             ${!isPast ? `data-date="${year},${month},${day}"` : ''}>
+      ${day}
+    </div>`;
+  }
+  
+  document.getElementById('calendar').innerHTML = html;
+  
+  document.querySelectorAll('[data-date]').forEach(day => {
+    day.addEventListener('click', function() {
+      const [year, month, day] = this.dataset.date.split(',').map(Number);
+      selectDate(year, month, day);
+    });
+  });
+}
+
+function changeMonth(delta) {
+  currentMonth.setMonth(currentMonth.getMonth() + delta);
+  renderCalendar();
+}
+
+function selectDate(year, month, day) {
+  bookingData.date = new Date(year, month, day).toISOString();
+  renderCalendar();
+  renderTimeSlots();
+}
+
+function renderTimeSlots() {
+  if (!bookingData.date || !bookingData.staff || !bookingData.service) return;
+  
+  const settings = JSON.parse(localStorage.getItem(DB.settings) || '{}');
+  const interval = settings.appointmentInterval || 30;
+  
+  const slots = [];
+  const [startHour, startMin] = bookingData.staff.startTime.split(':').map(Number);
+  const [endHour, endMin] = bookingData.staff.endTime.split(':').map(Number);
+  const duration = bookingData.service.duration;
+  
+  let current = startHour * 60 + startMin;
+  const end = endHour * 60 + endMin;
+  
+  const appointments = JSON.parse(localStorage.getItem(DB.appointments) || '[]');
+  const dateStr = new Date(bookingData.date).toDateString();
+  const dayAppointments = appointments.filter(a => 
+    new Date(a.date).toDateString() === dateStr && 
+    a.staffId === bookingData.staff.id &&
+    a.status === 'agendado'
+  );
+  
+  while (current + duration <= end) {
+    const hour = Math.floor(current / 60);
+    const min = current % 60;
+    const timeStr = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+    
+    const isBooked = dayAppointments.some(a => {
+      const appStart = a.time.split(':').map(Number);
+      const appStartMin = appStart[0] * 60 + appStart[1];
+      const appEndMin = appStartMin + a.duration;
+      return current < appEndMin && current + duration > appStartMin;
+    });
+    
+    slots.push({ time: timeStr, disabled: isBooked });
+    current += interval;
+  }
+  
+  const html = slots.map(s => `
+    <div class="time-slot ${s.disabled ? 'disabled' : ''} ${bookingData.time === s.time ? 'selected' : ''}" 
+         ${!s.disabled ? `data-time="${s.time}"` : ''}>
+      ${s.time}
+    </div>
+  `).join('');
+  
+  document.getElementById('timeSlots').innerHTML = html || '<p class="text-muted">Nenhum horário disponível</p>';
+  
+  document.querySelectorAll('[data-time]').forEach(slot => {
+    slot.addEventListener('click', function() {
+      selectTime(this.dataset.time);
+    });
+  });
+}
+
+function selectTime(time) {
+  bookingData.time = time;
+  renderTimeSlots();
+  setTimeout(nextStep, 300);
+}
+
+function renderBookingSummary() {
+  const date = new Date(bookingData.date);
+  const html = `
+    <p class="mb-2"><strong>Serviço:</strong> ${bookingData.service.name}</p>
+    <p class="mb-2"><strong>Profissional:</strong> ${bookingData.staff.name}</p>
+    <p class="mb-2"><strong>Data:</strong> ${date.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+    <p class="mb-2"><strong>Horário:</strong> ${bookingData.time}</p>
+    <p class="mb-2"><strong>Duração:</strong> ${bookingData.service.duration} minutos</p>
+    <p class="mb-2"><strong>Valor:</strong> R$ ${bookingData.service.price.toFixed(2)}</p>
+    <p class="mb-2"><strong>Pagamento:</strong> Na hora (Pix, Dinheiro, Cartão)</p>
+    <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--border);">
+    <p class="mb-2"><strong>Cliente:</strong> ${bookingData.client.name}</p>
+    <p class="mb-2"><strong>WhatsApp:</strong> ${bookingData.client.phone}</p>
+    ${bookingData.client.email ? `<p class="mb-2"><strong>E-mail:</strong> ${bookingData.client.email}</p>` : ''}
+  `;
+  document.getElementById('bookingSummary').innerHTML = html;
+}
+
+function confirmBooking() {
+  const appointments = JSON.parse(localStorage.getItem(DB.appointments) || '[]');
+  const newAppointment = {
+    id: Date.now(),
+    serviceId: bookingData.service.id,
+    serviceName: bookingData.service.name,
+    staffId: bookingData.staff.id,
+    staffName: bookingData.staff.name,
+    date: bookingData.date,
+    time: bookingData.time,
+    duration: bookingData.service.duration,
+    price: bookingData.service.price,
+    clientName: bookingData.client.name,
+    clientPhone: bookingData.client.phone,
+    clientEmail: bookingData.client.email,
+    notes: bookingData.client.notes,
+    status: 'agendado',
+    createdAt: new Date().toISOString()
+  };
+  
+  appointments.push(newAppointment);
+  localStorage.setItem(DB.appointments, JSON.stringify(appointments));
+  
+  // Update client loyalty
+  updateLoyalty(bookingData.client.phone);
+  
+  showToast('Agendamento confirmado com sucesso!', 'success');
+  sendWhatsAppReminder(newAppointment);
+  resetBooking();
+  setTimeout(() => showPage('client'), 1000);
+}
+
+// ============ CLIENT AREA ============
+function clientLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  if (!user) {
+    showToast('Digite seu e-mail ou telefone', 'error');
+    return;
+  }
+  
+  const clients = JSON.parse(localStorage.getItem(DB.clients) || '[]');
+  const client = clients.find(c => c.email === user || c.phone === user);
+  
+  if (client) {
+    localStorage.setItem(DB.currentClient, JSON.stringify(client));
+    showClientDashboard();
+    showToast('Login realizado com sucesso!', 'success');
+  } else {
+    showToast('Cliente não encontrado. Faça o cadastro', 'error');
+  }
+}
+
+function clientRegister() {
+  const name = document.getElementById('registerName').value.trim();
+  const phone = document.getElementById('registerPhone').value.trim();
+  const email = document.getElementById('registerEmail').value.trim();
+  
+  if (!name || !phone) {
+    showToast('Preencha nome e telefone', 'error');
+    return;
+  }
+  
+  const clients = JSON.parse(localStorage.getItem(DB.clients) || '[]');
+  const exists = clients.find(c => c.phone === phone || (email && c.email === email));
+  
+  if (exists) {
+    showToast('Já existe cadastro com este telefone/e-mail', 'error');
+    return;
+  }
+  
+  const newClient = { id: Date.now(), name, phone, email, loyaltyPoints: 0 };
+  clients.push(newClient);
+  localStorage.setItem(DB.clients, JSON.stringify(clients));
+  localStorage.setItem(DB.currentClient, JSON.stringify(newClient));
+  
+  showClientDashboard();
+  showToast('Cadastro realizado com sucesso!', 'success');
+}
+
+function getCurrentClient() {
+  return JSON.parse(localStorage.getItem(DB.currentClient) || 'null');
+}
+
+function showClientDashboard() {
+  const client = getCurrentClient();
+  if (!client) return;
+  
+  document.getElementById('loginCard').classList.add('hidden');
+  document.getElementById('clientDashboard').classList.remove('hidden');
+  document.getElementById('clientDashboardName').textContent = client.name;
+  
+  renderClientAppointments();
+  renderLoyaltyPoints();
+}
+
+function clientLogout() {
+  localStorage.removeItem(DB.currentClient);
+  document.getElementById('loginCard').classList.remove('hidden');
+  document.getElementById('clientDashboard').classList.add('hidden');
+  showToast('Logout realizado', 'info');
+}
+
+function renderClientAppointments() {
+  const client = getCurrentClient();
+  const appointments = JSON.parse(localStorage.getItem(DB.appointments) || '[]');
+  const clientAppointments = appointments.filter(a => a.clientPhone === client.phone);
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const upcoming = clientAppointments.filter(a => new Date(a.date) >= today && a.status === 'agendado');
+  const past = clientAppointments.filter(a => new Date(a.date) < today || a.status !== 'agendado');
+  
+  const renderAppointment = (a, showActions = true) => {
+    const date = new Date(a.date);
+    return `
+      <div class="appointment-item">
+        <div class="appointment-time">
+          <div class="date">${date.getDate()}</div>
+          <div class="month">${date.toLocaleDateString('pt-BR', { month: 'short' })}</div>
+        </div>
+        <div class="appointment-details">
+          <h4>${a.serviceName}</h4>
+          <p class="text-muted">${a.staffName} • ${a.time} • R$ ${a.price.toFixed(2)}</p>
+          <span class="appointment-status status-${a.status}">${a.status.charAt(0).toUpperCase() + a.status.slice(1)}</span>
+          ${showActions && a.status === 'agendado' ? `
+            <div class="mt-2" style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-sm btn-danger" data-cancel="${a.id}">
+                <i class="fa-solid fa-xmark"></i> Cancelar
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  };
+  
+  document.getElementById('upcomingAppointments').innerHTML = 
+    upcoming.length ? upcoming.map(a => renderAppointment(a)).join('') : '<p class="text-muted">Nenhum agendamento próximo</p>';
+  
+  document.getElementById('pastAppointments').innerHTML = 
+    past.length ? past.slice(0, 5).map(a => renderAppointment(a, false)).join('') : '<p class="text-muted">Nenhum histórico</p>';
+  
+  // Attach cancel handlers
+  document.querySelectorAll('[data-cancel]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      cancelAppointment(parseInt(this.dataset.cancel));
+    });
+  });
+}
+
+function cancelAppointment(id) {
+  if (!confirm('Deseja realmente cancelar este agendamento?')) return;
+  
+  const appointments = JSON.parse(localStorage.getItem(DB.appointments) || '[]');
+  const appointment = appointments.find(a => a.id === id);
+  if (appointment) {
+    appointment.status = 'cancelado';
+    localStorage.setItem(DB.appointments, JSON.stringify(appointments));
+    renderClientAppointments();
+    renderAdminDashboard();
+    showToast('Agendamento cancelado', 'info');
+  }
+}
+
+function updateLoyalty(phone) {
+  const clients = JSON.parse(localStorage.getItem(DB.clients) || '[]');
+  const client = clients.find(c => c.phone === phone);
+  if (client) {
+    client.loyaltyPoints = (client.loyaltyPoints || 0) + 1;
+    localStorage.setItem(DB.clients, JSON.stringify(clients));
+  }
+}
+
+function renderLoyaltyPoints() {
+  const client = getCurrentClient();
+  const clients = JSON.parse(localStorage.getItem(DB.clients) || '[]');
+  const fullClient = clients.find(c => c.phone === client.phone);
+  const points = fullClient?.loyaltyPoints || 0;
+  const nextReward = 5 - (points % 5);
+  
+  document.getElementById('loyaltyPoints').innerHTML = `
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+      <div style="font-size: 3rem; color: var(--warning);">
+        <i class="fa-solid fa-star"></i>
+      </div>
+      <div>
+        <h3 style="font-size: 2rem; margin: 0;">${points} pontos</h3>
+        <p class="text-muted">Faltam ${nextReward} para o próximo desconto</p>
+      </div>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      ${Array(5).fill(0).map((_, i) => `
+        <div style="flex: 1; height: 8px; background: ${i < (points % 5 || (points > 0 ? 5 : 0)) ? 'var(--warning)' : 'var(--border)'}; border-radius: 4px;"></div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ============ ADMIN ============
+function renderAdminDashboard() {
+  const appointments = JSON.parse(localStorage.getItem(DB.appointments) || '[]');
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  
+  const today = new Date().toDateString();
+  const todayAppointments = appointments.filter(a => new Date(a.date).toDateString() === today);
+  const todayRevenue = todayAppointments.filter(a => a.status === 'concluido').reduce((sum, a) => sum + a.price, 0);
+  
+  document.getElementById('todayCount').textContent = todayAppointments.length;
+  document.getElementById('todayRevenue').textContent = `R$ ${todayRevenue.toFixed(2)}`;
+  document.getElementById('staffCount').textContent = staff.length;
+  document.getElementById('serviceCount').textContent = services.length;
+  
+  renderAdminStaffFilter();
+  filterAdminAppointments();
+  renderAdminServices();
+  renderAdminStaff();
+}
+
+function renderWeeklyChart() {
+  const ctx = document.getElementById('weeklyChart');
+  if (!ctx) return;
+  
+  const appointments = JSON.parse(localStorage.getItem(DB.appointments) || '[]');
+  const last7Days = [];
+  const data = [];
+  
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    date.setHours(0, 0, 0, 0);
+    last7Days.push(date.toLocaleDateString('pt-BR', { weekday: 'short' }));
+    
+    const count = appointments.filter(a => {
+      const appDate = new Date(a.date);
+      appDate.setHours(0, 0, 0, 0);
+      return appDate.getTime() === date.getTime() && a.status !== 'cancelado';
+    }).length;
+    data.push(count);
+  }
+  
+  if (weeklyChart) weeklyChart.destroy();
+  
+  weeklyChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: last7Days,
+      datasets: [{
+        label: 'Agendamentos',
+        data: data,
+        borderColor: '#7c3aed',
+        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+
+function renderAdminStaffFilter() {
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  const options = staff.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+  document.getElementById('adminStaffFilter').innerHTML = '<option value="">Todos profissionais</option>' + options;
+}
+
+function filterAdminAppointments() {
+  const appointments = JSON.parse(localStorage.getItem(DB.appointments) || '[]');
+  const dateFilter = document.getElementById('adminDateFilter').value;
+  const staffFilter = document.getElementById('adminStaffFilter').value;
+  const statusFilter = document.getElementById('adminStatusFilter').value;
+  
+  let filtered = appointments;
+  
+  if (dateFilter) {
+    filtered = filtered.filter(a => a.date.startsWith(dateFilter));
+  }
+  if (staffFilter) {
+    filtered = filtered.filter(a => a.staffId == staffFilter);
+  }
+  if (statusFilter) {
+    filtered = filtered.filter(a => a.status === statusFilter);
+  }
+  
+  const html = filtered.map(a => {
+    const date = new Date(a.date);
+    return `
+      <tr>
+        <td>${date.toLocaleDateString('pt-BR')} ${a.time}</td>
+        <td>${a.clientName}<br><small class="text-muted">${a.clientPhone}</small></td>
+        <td>${a.serviceName}</td>
+        <td>${a.staffName}</td>
+        <td>R$ ${a.price.toFixed(2)}</td>
+        <td><span class="appointment-status status-${a.status}">${a.status}</span></td>
+        <td>
+          <button class="btn btn-sm btn-success" data-complete="${a.id}" title="Concluir">
+            <i class="fa-solid fa-check"></i>
+          </button>
+          <button class="btn btn-sm btn-danger" data-cancel-admin="${a.id}" title="Cancelar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <button class="btn btn-sm btn-secondary" data-detail="${a.id}" title="Detalhes">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+  
+  document.getElementById('adminAppointments').innerHTML = html || '<tr><td colspan="7" class="text-center text-muted">Nenhum agendamento encontrado</td></tr>';
+  
+  // Attach handlers
+  document.querySelectorAll('[data-complete]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      updateAppointmentStatus(parseInt(this.dataset.complete), 'concluido');
+    });
+  });
+  document.querySelectorAll('[data-cancel-admin]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      updateAppointmentStatus(parseInt(this.dataset.cancelAdmin), 'cancelado');
+    });
+  });
+  document.querySelectorAll('[data-detail]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      showAppointmentDetail(parseInt(this.dataset.detail));
+    });
+  });
+}
+
+function updateAppointmentStatus(id, status) {
+  const appointments = JSON.parse(localStorage.getItem(DB.appointments) || '[]');
+  const appointment = appointments.find(a => a.id === id);
+  if (appointment) {
+    appointment.status = status;
+    localStorage.setItem(DB.appointments, JSON.stringify(appointments));
+    renderAdminDashboard();
+    showToast(`Status atualizado para ${status}`, 'success');
+  }
+}
+
+function showAppointmentDetail(id) {
+  const appointments = JSON.parse(localStorage.getItem(DB.appointments) || '[]');
+  const a = appointments.find(app => app.id === id);
+  if (!a) return;
+  
+  const date = new Date(a.date);
+  document.getElementById('appointmentDetailContent').innerHTML = `
+    <p class="mb-2"><strong>Cliente:</strong> ${a.clientName}</p>
+    <p class="mb-2"><strong>WhatsApp:</strong> ${a.clientPhone}</p>
+    ${a.clientEmail ? `<p class="mb-2"><strong>E-mail:</strong> ${a.clientEmail}</p>` : ''}
+    <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--border);">
+    <p class="mb-2"><strong>Serviço:</strong> ${a.serviceName}</p>
+    <p class="mb-2"><strong>Profissional:</strong> ${a.staffName}</p>
+    <p class="mb-2"><strong>Data:</strong> ${date.toLocaleDateString('pt-BR')}</p>
+    <p class="mb-2"><strong>Horário:</strong> ${a.time}</p>
+    <p class="mb-2"><strong>Duração:</strong> ${a.duration} min</p>
+    <p class="mb-2"><strong>Valor:</strong> R$ ${a.price.toFixed(2)}</p>
+    <p class="mb-2"><strong>Status:</strong> <span class="appointment-status status-${a.status}">${a.status}</span></p>
+    ${a.notes ? `<p class="mb-2"><strong>Observações:</strong> ${a.notes}</p>` : ''}
+  `;
+  openModal('appointmentDetailModal');
+}
+
+function renderAdminServices() {
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  const html = services.map(s => `
+    <div class="card mb-2" style="padding: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h4>${s.name}</h4>
+          <p class="text-muted">${s.category} • ${s.duration}min • R$ ${s.price.toFixed(2)}</p>
+          <p class="text-muted" style="font-size: 0.875rem;">${s.description}</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-sm btn-secondary" data-edit-service="${s.id}">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="btn btn-sm btn-danger" data-delete-service="${s.id}">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('adminServices').innerHTML = html || '<p class="text-muted">Nenhum serviço cadastrado</p>';
+  
+  document.querySelectorAll('[data-edit-service]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      editService(parseInt(this.dataset.editService));
+    });
+  });
+  document.querySelectorAll('[data-delete-service]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      deleteService(parseInt(this.dataset.deleteService));
+    });
+  });
+}
+
+function renderAdminStaff() {
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  const html = staff.map(s => `
+    <div class="card mb-2" style="padding: 1rem;">
+      <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <img src="${s.photo}" alt="${s.name}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        <div style="flex: 1;">
+          <h4>${s.name}</h4>
+          <p class="text-muted">${s.specialties.join(', ')} • ${s.startTime}-${s.endTime}</p>
+          <p class="text-muted" style="font-size: 0.875rem;"><i class="fa-solid fa-star" style="color: var(--warning);"></i> ${s.rating.toFixed(1)}</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-sm btn-secondary" data-edit-staff="${s.id}">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="btn btn-sm btn-danger" data-delete-staff="${s.id}">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('adminStaff').innerHTML = html || '<p class="text-muted">Nenhum profissional cadastrado</p>';
+  
+  document.querySelectorAll('[data-edit-staff]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      editStaff(parseInt(this.dataset.editStaff));
+    });
+  });
+  document.querySelectorAll('[data-delete-staff]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      deleteStaff(parseInt(this.dataset.deleteStaff));
+    });
+  });
+}
+
+// ============ SERVICE CRUD ============
+function openServiceModal() {
+  document.getElementById('serviceModalTitle').textContent = 'Adicionar Serviço';
+  document.getElementById('serviceId').value = '';
+  document.getElementById('serviceName').value = '';
+  document.getElementById('serviceCategory').value = 'Cabelo';
+  document.getElementById('servicePrice').value = '';
+  document.getElementById('serviceDuration').value = '';
+  document.getElementById('serviceDescription').value = '';
+  openModal('serviceModal');
+}
+
+function editService(id) {
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  const service = services.find(s => s.id === id);
+  if (service) {
+    document.getElementById('serviceModalTitle').textContent = 'Editar Serviço';
+    document.getElementById('serviceId').value = service.id;
+    document.getElementById('serviceName').value = service.name;
+    document.getElementById('serviceCategory').value = service.category;
+    document.getElementById('servicePrice').value = service.price;
+    document.getElementById('serviceDuration').value = service.duration;
+    document.getElementById('serviceDescription').value = service.description;
+    openModal('serviceModal');
+  }
+}
+
+function saveService() {
+  const id = document.getElementById('serviceId').value;
+  const name = document.getElementById('serviceName').value.trim();
+  const category = document.getElementById('serviceCategory').value;
+  const price = parseFloat(document.getElementById('servicePrice').value);
+  const duration = parseInt(document.getElementById('serviceDuration').value);
+  const description = document.getElementById('serviceDescription').value.trim();
+  
+  if (!name || !price || !duration) {
+    showToast('Preencha todos os campos obrigatórios', 'error');
+    return;
+  }
+  
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  
+  if (id) {
+    const index = services.findIndex(s => s.id == id);
+    if (index !== -1) {
+      services[index] = { id: parseInt(id), name, category, price, duration, description };
+    }
+  } else {
+    services.push({ id: Date.now(), name, category, price, duration, description });
+  }
+  
+  localStorage.setItem(DB.services, JSON.stringify(services));
+  closeModal('serviceModal');
+  renderAdminServices();
+  renderServices();
+  renderFeaturedCombos();
+  showToast('Serviço salvo com sucesso!', 'success');
+}
+
+function deleteService(id) {
+  if (!confirm('Deseja realmente excluir este serviço?')) return;
+  
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  const filtered = services.filter(s => s.id !== id);
+  localStorage.setItem(DB.services, JSON.stringify(filtered));
+  renderAdminServices();
+  renderServices();
+  showToast('Serviço excluído', 'info');
+}
+
+// ============ STAFF CRUD ============
+function openStaffModal() {
+  document.getElementById('staffModalTitle').textContent = 'Adicionar Profissional';
+  document.getElementById('staffId').value = '';
+  document.getElementById('staffName').value = '';
+  document.getElementById('staffPhoto').value = '';
+  document.getElementById('staffSpecialties').value = '';
+  document.getElementById('staffStartTime').value = '09:00';
+  document.getElementById('staffEndTime').value = '18:00';
+  openModal('staffModal');
+}
+
+function editStaff(id) {
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  const person = staff.find(s => s.id === id);
+  if (person) {
+    document.getElementById('staffModalTitle').textContent = 'Editar Profissional';
+    document.getElementById('staffId').value = person.id;
+    document.getElementById('staffName').value = person.name;
+    document.getElementById('staffPhoto').value = person.photo;
+    document.getElementById('staffSpecialties').value = person.specialties.join(', ');
+    document.getElementById('staffStartTime').value = person.startTime;
+    document.getElementById('staffEndTime').value = person.endTime;
+    openModal('staffModal');
+  }
+}
+
+function saveStaff() {
+  const id = document.getElementById('staffId').value;
+  const name = document.getElementById('staffName').value.trim();
+  const photo = document.getElementById('staffPhoto').value.trim() || `https://i.pravatar.cc/150?img=${Math.floor(Math.random()*70)}`;
+  const specialties = document.getElementById('staffSpecialties').value.split(',').map(s => s.trim()).filter(Boolean);
+  const startTime = document.getElementById('staffStartTime').value;
+  const endTime = document.getElementById('staffEndTime').value;
+  
+  if (!name || specialties.length === 0) {
+    showToast('Preencha nome e especialidades', 'error');
+    return;
+  }
+  
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  
+  if (id) {
+    const index = staff.findIndex(s => s.id == id);
+    if (index !== -1) {
+      staff[index] = { ...staff[index], name, photo, specialties, startTime, endTime };
+    }
+  } else {
+    staff.push({ id: Date.now(), name, photo, specialties, rating: 4.5, startTime, endTime });
+  }
+  
+  localStorage.setItem(DB.staff, JSON.stringify(staff));
+  closeModal('staffModal');
+  renderAdminStaff();
+  renderStaff();
+  showToast('Profissional salvo com sucesso!', 'success');
+}
+
+function deleteStaff(id) {
+  if (!confirm('Deseja realmente excluir este profissional?')) return;
+  
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  const filtered = staff.filter(s => s.id !== id);
+  localStorage.setItem(DB.staff, JSON.stringify(filtered));
+  renderAdminStaff();
+  renderStaff();
+  showToast('Profissional excluído', 'info');
+}
+
+// ============ SETTINGS ============
+function saveSettings() {
+  const settings = {
+    businessStart: document.getElementById('businessStart').value,
+    businessEnd: document.getElementById('businessEnd').value,
+    appointmentInterval: parseInt(document.getElementById('appointmentInterval').value),
+    minAdvance: parseInt(document.getElementById('minAdvance').value)
+  };
+  localStorage.setItem(DB.settings, JSON.stringify(settings));
+  showToast('Configurações salvas com sucesso!', 'success');
+}
+
+// ============ UTILS ============
+function renderFeaturedCombos() {
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  const combos = services.filter(s => s.category === 'Combo').slice(0, 3);
+  
+  const html = combos.map(s => `
+    <div class="card service-card" onclick="startBooking('Combo')">
+      <h3 class="mb-1">${s.name}</h3>
+      <p class="text-muted mb-2">${s.description}</p>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="service-price">R$ ${s.price.toFixed(2)}</div>
+        <div class="service-duration"><i class="fa-solid fa-clock"></i> ${s.duration} min</div>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('featuredCombos').innerHTML = html || '<p class="text-muted">Nenhum combo disponível</p>';
+}
+
+function renderAllServices() {
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  const filter = document.getElementById('servicesPageFilter')?.value || '';
+  const filtered = filter ? services.filter(s => s.category === filter) : services;
+  
+  const html = filtered.map(s => `
+    <div class="card service-card" onclick="selectServiceAndBook(${s.id})">
+      <h3 class="mb-1">${s.name}</h3>
+      <p class="text-muted mb-2">${s.description}</p>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="service-price">R$ ${s.price.toFixed(2)}</div>
+        <div class="service-duration"><i class="fa-solid fa-clock"></i> ${s.duration} min</div>
+      </div>
+      <button class="btn btn-primary btn-sm btn-block mt-2">
+        <i class="fa-solid fa-calendar-plus"></i> Agendar
+      </button>
+    </div>
+  `).join('');
+  
+  document.getElementById('allServicesList').innerHTML = html || '<p class="text-muted">Nenhum serviço encontrado</p>';
+}
+
+function selectServiceAndBook(serviceId) {
+  const services = JSON.parse(localStorage.getItem(DB.services) || '[]');
+  bookingData.service = services.find(s => s.id === serviceId);
+  showPage('booking');
+  resetBooking();
+  bookingData.service = services.find(s => s.id === serviceId);
+  nextStep();
+  updateStepUI();
+  renderServices();
+}
+
+function renderAllProfessionals() {
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  const filter = document.getElementById('professionalsPageFilter')?.value || '';
+  const filtered = filter ? staff.filter(s => s.specialties.includes(filter)) : staff;
+  
+  const html = filtered.map(s => `
+    <div class="card staff-card" onclick="selectStaffAndBook(${s.id})">
+      <img src="${s.photo}" alt="${s.name}" class="staff-avatar">
+      <h3>${s.name}</h3>
+      <div class="staff-rating">
+        <i class="fa-solid fa-star"></i> ${s.rating.toFixed(1)}
+      </div>
+      <div class="mb-2">
+        ${s.specialties.map(sp => `<span class="badge">${sp}</span>`).join('')}
+      </div>
+      <p class="text-muted" style="font-size: 0.875rem;">${s.startTime} - ${s.endTime}</p>
+      <button class="btn btn-primary btn-sm btn-block mt-2">
+        <i class="fa-solid fa-calendar-plus"></i> Agendar com ${s.name.split(' ')[0]}
+      </button>
+    </div>
+  `).join('');
+  
+  document.getElementById('allProfessionalsList').innerHTML = html || '<p class="text-muted">Nenhum profissional encontrado</p>';
+}
+
+function selectStaffAndBook(staffId) {
+  showPage('booking');
+  resetBooking();
+  nextStep();
+  const staff = JSON.parse(localStorage.getItem(DB.staff) || '[]');
+  bookingData.staff = staff.find(s => s.id === staffId);
+  renderBookingStaff();
+  nextStep();
+  updateStepUI();
+}
+
+function renderStaff() {
+  // For public view if needed
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-info'}"></i>
+    <span>${message}</span>
+  `;
+  
+  document.getElementById('toastContainer').appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'slideInRight 0.3s ease reverse';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+function contactWhatsApp() {
+  const branding = JSON.parse(localStorage.getItem(DB.branding) || '{}');
+  const phone = branding.whatsapp || '47996355319';
+  const message = encodeURIComponent('Olá! Gostaria de mais informações sobre os serviços.');
+  window.open(`https://wa.me/55${phone}?text=${message}`, '_blank');
+}
+
+function sendWhatsAppReminder(appointment) {
+  const branding = JSON.parse(localStorage.getItem(DB.branding) || '{}');
+  const date = new Date(appointment.date);
+  const message = encodeURIComponent(
+    `Olá ${appointment.clientName}! Seu agendamento foi confirmado:\n\n` +
+    `📅 ${date.toLocaleDateString('pt-BR')} às ${appointment.time}\n` +
+    `💇 ${appointment.serviceName}\n` +
+    `👤 ${appointment.staffName}\n` +
+    `💰 R$ ${appointment.price.toFixed(2)}\n` +
+    `💳 Pagamento na hora (Pix, Dinheiro, Cartão)\n\n` +
+    `Aguardamos você!`
+  );
+  console.log('WhatsApp reminder:', message);
+}
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', init);
+</script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;var a=target.closest?target.closest("a[href]"):null;if(!a||!a.href||!/^https?:\/\//.test(a.href))return;if(a.href.replace(/#.*$/,"")===loc)return;var productId=extractProductId(target)||extractProductId(a);if(!productId)return;e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*")},true)})();</script></body>
+</html>
